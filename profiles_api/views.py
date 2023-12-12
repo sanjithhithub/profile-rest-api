@@ -2,13 +2,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
-from  rest_framework.authentication import TokenAuthentication
-from profiles_api import models, serializers
-from profiles_api import permission
+from rest_framework.authentication import TokenAuthentication
+from profiles_api import models, serializers, permission
 from rest_framework import filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
- 
+from rest_framework.permissions import IsAuthenticated
 
 class HelloApiView(APIView):
     """Test API view"""
@@ -40,15 +39,16 @@ class HelloApiView(APIView):
 
     def put(self, request, pk=None):
         """Handle updating an object"""
-        return Response({'method':'PUT'})
+        return Response({'method': 'PUT'})
 
     def patch(self, request, pk=None):
         """Handle a partial update of an object"""
-        return Response({'method':'PATCH'})
+        return Response({'method': 'PATCH'})
 
     def delete(self, request, pk=None):
         """Delete an object"""
-        return Response({'method':'DELETE'})
+        return Response({'method': 'DELETE'})
+
 
 class HelloViewSet(viewsets.ViewSet):
     """Test API Views"""
@@ -94,6 +94,7 @@ class HelloViewSet(viewsets.ViewSet):
         """Handle removing an object"""
         return Response({'http_method': 'DELETE'})
 
+
 class UserProfileViewSet(viewsets.ModelViewSet):
     """Handle creating and updating profiles"""
     serializer_class = serializers.UserProfileSerializer
@@ -101,17 +102,30 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permission.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('name','email',)
+    search_fields = ('name', 'email',)
+
+
+
+    from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.settings import api_settings
 
 class UserLoginApiView(ObtainAuthToken):
-    """Handle creating User authentication tokens"""
+    """Handle creating user authentication tokens"""
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
-    
 
 
 
-     
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading, and updating profile feeds items"""
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ProfilesFeedItemSerializer  # Corrected serializer name
+    queryset = models.ProfilesFeedItem.objects.all()
+    permission_classes = (
+        permission.UpdateOwnStatus,
+       IsAuthenticated
+    )
 
+    def perform_create(self, serializer):
+        """Sets the user profile to the logged-in user"""
+        serializer.save(user_profile=self.request.user)
 
-
-    
