@@ -9,7 +9,7 @@ PROJECT_BASE_PATH='C:\Users\sanjith\Desktop\New folder\profile-rest-api'
 
 echo "Installing dependencies..."
 yum update
-yum install -y python3 python3-venv sqlite python3-pip supervisor nginx git
+yum install -y python python-venv sqlite python-pip supervisor nginx git
 
 # Create project directory
 mkdir -p $PROJECT_BASE_PATH
