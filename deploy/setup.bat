@@ -1,33 +1,43 @@
+#!Users\sanjith\Desktop\New folder\profile-rest-api
+
+set -e
+
 # TODO: Set to URL of git repo.
-$PROJECT_GIT_URL = 'https://github.com/sanjithhithub/profile-rest-api.git'
+PROJECT_GIT_URL='https://github.com/sanjithhithub/profile-rest-api.git'
 
-$PROJECT_BASE_PATH = 'C:\Users\sanjith\Desktop\New folder\profile-rest-api'
+PROJECT_BASE_PATH='Users\sanjith\Desktop\New folder\profile-rest-api'
 
-Write-Host "Installing dependencies..."
-
-# Install chocolatey package manager
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-
-# Install required packages
-choco install -y python3 sqlite git
+echo "Installing dependencies..."
+apt-get update
+apt-get install -y python3-dev python3-venv sqlite python-pip supervisor nginx git
 
 # Create project directory
-New-Item -ItemType Directory -Force -Path $PROJECT_BASE_PATH | Out-Null
+mkdir -p $PROJECT_BASE_PATH
 git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH
 
 # Create virtual environment
-python -m venv $PROJECT_BASE_PATH\env
+mkdir -p $PROJECT_BASE_PATH/env
+python3 -m venv $PROJECT_BASE_PATH/env
 
 # Install python packages
-$PROJECT_BASE_PATH\env\Scripts\pip install -r $PROJECT_BASE_PATH\requirements.txt
-$PROJECT_BASE_PATH\env\Scripts\pip install uwsgi==2.0.18
+$PROJECT_BASE_PATH/env/bin/pip install -r $PROJECT_BASE_PATH/requirements.txt
+$PROJECT_BASE_PATH/env/bin/pip install uwsgi==2.0.18
 
 # Run migrations and collectstatic
 cd $PROJECT_BASE_PATH
-$PROJECT_BASE_PATH\env\Scripts\python manage.py migrate
-$PROJECT_BASE_PATH\env\Scripts\python manage.py collectstatic --noinput
+$PROJECT_BASE_PATH/env/bin/python manage.py migrate
+$PROJECT_BASE_PATH/env/bin/python manage.py collectstatic --noinput
 
-# Configure supervisor (not available on Windows, you might need to find an alternative)
-# Configure nginx (not available on Windows, you might need to find an alternative)
+# Configure supervisor
+cp $PROJECT_BASE_PATH/deploy/supervisor_profiles_api.conf /etc/supervisor/conf.d/profiles_api.conf
+supervisorctl reread
+supervisorctl update
+supervisorctl restart profiles_api
 
-Write-Host "DONE! :)"
+# Configure nginx
+cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
+rm /etc/nginx/sites-enabled/default
+ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
+systemctl restart nginx.service
+
+echo "DONE! :)"
