@@ -1,15 +1,15 @@
-#!/C:\Users\sanjith\Desktop\New folder\profile-rest-api> 
+#! C:\Users\sanjith\Desktop\New folder\profile-rest-api
 
 set -e
 
 # TODO: Set to URL of git repo.
 PROJECT_GIT_URL='https://github.com/sanjithhithub/profile-rest-api.git'
 
-PROJECT_BASE_PATH='C:\Users\sanjith\Desktop\New folder\profile-rest-api> '
+PROJECT_BASE_PATH=' C:\Users\sanjith\Desktop\New folder\profile-rest-api'
 
 echo "Installing dependencies..."
-sudo-yum update
-sudo-yum install -y python3-dev python3-venv sqlite python-pip supervisor nginx git
+sudo yum update
+sudo yum install -y python3 python3-pip python3-devel python3-venv sqlite supervisor nginx git
 
 # Create project directory
 sudo mkdir -p $PROJECT_BASE_PATH
@@ -38,6 +38,6 @@ sudo supervisorctl restart profiles_api
 sudo cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
 sudo rm /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
-sudo systemctl restart nginx.service
+sudo systemctl restart nginx
 
 echo "DONE! :)"
