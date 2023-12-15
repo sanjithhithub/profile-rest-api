@@ -15,29 +15,24 @@ sudo yum install -y python3-dev python3-venv sqlite python-pip supervisor nginx 
 mkdir -p $PROJECT_BASE_PATH
 git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH
 
-# Create virtual environment
-mkdir -p $PROJECT_BASE_PATH/env
-python -m venv $PROJECT_BASE_PATH/env
+REM Create virtual environment
+python -m venv env
 
-# Install python packages
-$PROJECT_BASE_PATH/env/bin/pip install -r $PROJECT_BASE_PATH/requirements.txt
-$PROJECT_BASE_PATH/env/bin/pip install uwsgi==2.0.18
+REM Activate virtual environment
+.\env\Scripts\activate
 
-# Run migrations and collectstatic
-cd $PROJECT_BASE_PATH
-$PROJECT_BASE_PATH/env/bin/python manage.py migrate
-$PROJECT_BASE_PATH/env/bin/python manage.py collectstatic --noinput
+REM Install Python packages
+pip install -r requirements.txt
+pip install uwsgi==2.0.18
 
-# Configure supervisor
-cp $PROJECT_BASE_PATH/deploy/supervisor_profiles_api.conf /etc/supervisor/conf.d/profiles_api.conf
-supervisorctl reread
-supervisorctl update
-supervisorctl restart profiles_api
+REM Run migrations and collectstatic
+python manage.py migrate
+python manage.py collectstatic --noinput
 
-# Configure nginx
-cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
-rm /etc/nginx/sites-enabled/default
-ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
-systemctl restart nginx.service
+REM Deactivate virtual environment
+deactivate
 
-echo "DONE! :)"
+REM Configure supervisor (if applicable, supervisor may not be available on Windows)
+REM Configure nginx (if applicable, nginx may not be available on Windows)
+
+echo DONE! :)
