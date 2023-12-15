@@ -5,7 +5,7 @@ set -e
 # TODO: Set to URL of git repo.
 PROJECT_GIT_URL='https://github.com/sanjithhithub/profile-rest-api.git'
 
-PROJECT_BASE_PATH='C:\Users\sanjith\Desktop\New folder\profile-rest-api'
+PROJECT_BASE_PATH='C:\Users\sanjith\Desktop\New folder\profile-rest-api'  
 
 echo "Installing dependencies..."
 yum update
@@ -19,9 +19,15 @@ git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH
 mkdir -p $PROJECT_BASE_PATH/env
 python3 -m venv $PROJECT_BASE_PATH/env
 
+# Activate virtual environment
+source $PROJECT_BASE_PATH/env/bin/activate
+
 # Install python packages
-$PROJECT_BASE_PATH/env/bin/pip install -r $PROJECT_BASE_PATH/requirements.txt
-$PROJECT_BASE_PATH/env/bin/pip install uwsgi==2.0.18
+pip install -r $PROJECT_BASE_PATH/requirements.txt
+pip install uwsgi==2.0.18
+
+# Deactivate virtual environment
+deactivate
 
 # Run migrations and collectstatic
 cd $PROJECT_BASE_PATH
@@ -30,6 +36,7 @@ $PROJECT_BASE_PATH/env/bin/python manage.py collectstatic --noinput
 
 # Configure supervisor
 cp $PROJECT_BASE_PATH/deploy/supervisor_profiles_api.conf /etc/supervisord.d/profiles_api.conf
+supervisord
 supervisorctl reread
 supervisorctl update
 supervisorctl restart profiles_api
