@@ -1,41 +1,44 @@
-#!/C:\Users\sanjith\Desktop\New folder\profile-rest-api
+# C:\Users\sanjith\Desktop\New folder\profile-rest-api>
+$PROJECT_GIT_URL = 'https://github.com/sanjithhithub/profile-rest-api.git'
 
-set -e
+# Set the desired project path
+$PROJECT_BASE_PATH = 'C:\Users\sanjith\Desktop\New folder\profile-rest-api>'
 
-# TODO: Set to URL of git repo.
-PROJECT_GIT_URL='https://github.com/sanjithhithub/profile-rest-api.git'
+Write-Host "Installing dependencies..."
 
-PROJECT_BASE_PATH='C:\Users\sanjith\Desktop\New folder\profile-rest-api'  
-
-echo "Installing dependencies..."
+# Update and install dependencies
 sudo yum update -y
-sudo yum install -y python-devel python-venv sqlite python-pip supervisor nginx git
+sudo yum install -y python3 python3-devel python3-venv sqlite python3-pip supervisor nginx git
 
 # Create project directory
-sudo mkdir -p $PROJECT_BASE_PATH
-sudo git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH
+New-Item -Path $PROJECT_BASE_PATH -ItemType Directory -Force
+git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH
 
 # Create virtual environment
-sudo mkdir -p $PROJECT_BASE_PATH/env
-sudo python3 -m venv $PROJECT_BASE_PATH/env
+New-Item -Path "$PROJECT_BASE_PATH\env" -ItemType Directory -Force
+python3 -m venv "$PROJECT_BASE_PATH\env"
+
+# Activate virtual environment
+Activate-VirtualEnvironment $PROJECT_BASE_PATH\env\Scripts\Activate.ps1
 
 # Install python packages
-sudo $PROJECT_BASE_PATH/env/bin/pip install -r $PROJECT_BASE_PATH/requirements.txt
-sudo $PROJECT_BASE_PATH/env/bin/pip install uwsgi==2.0.18
+pip install -r "$PROJECT_BASE_PATH\requirements.txt"
+pip install uwsgi==2.0.18
+
+# Deactivate virtual environment
+Deactivate
 
 # Run migrations and collectstatic
-cd $PROJECT_BASE_PATH
-sudo $PROJECT_BASE_PATH/env/bin/python manage.py migrate
-sudo $PROJECT_BASE_PATH/env/bin/python manage.py collectstatic --noinput
+Set-Location $PROJECT_BASE_PATH
+& "$PROJECT_BASE_PATH\env\Scripts\python" manage.py migrate
+& "$PROJECT_BASE_PATH\env\Scripts\python" manage.py collectstatic --noinput
 
 # Configure supervisor
-sudo cp $PROJECT_BASE_PATH/deploy/supervisor_profiles_api.conf /etc/supervisord.d/profiles_api.conf
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl restart profiles_api
+Copy-Item "$PROJECT_BASE_PATH\deploy\supervisor_profiles_api.conf" 'C:\ProgramData\supervisord\conf.d\profiles_api.conf'
+Start-Service supervisor
 
 # Configure nginx
-sudo cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/conf.d/profiles_api.conf
-sudo systemctl restart nginx
+Copy-Item "$PROJECT_BASE_PATH\deploy\nginx_profiles_api.conf" 'C:\nginx\conf.d\profiles_api.conf'
+Restart-Service nginx
 
-echo "DONE! :)"
+Write-Host "DONE! :)"
