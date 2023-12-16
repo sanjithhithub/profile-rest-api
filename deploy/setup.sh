@@ -3,37 +3,42 @@
 set -e
 
 # TODO: Set to URL of git repo.
-PROJECT_GIT_URL='https://github.com/sanjithhithub/profile-rest-api.git
-PROJECT_BASE_PATH='/usr/local/apps/profiles-rest-api'
+PROJECT_GIT_URL='https://github.com/sanjithhithub/profile-rest-api.git'
+PROJECT_BASE_PATH='/path/to/your/preferred/location/profiles-rest-api'
 
 echo "Installing dependencies..."
-sudo apt-get update
-sudo apt-get install -y python3-dev python3-venv sqlite python3-pip supervisor nginx git
+sudo-get update
+sudo-get install -y python3-dev python3-venv sqlite python3-pip supervisor nginx git
 
 # Create project directory
-sudo mkdir -p $PROJECT_BASE_PATH
-sudo git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH
+mkdir -p $PROJECT_BASE_PATH
+git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH
 
 # Create virtual environment
-sudo mkdir -p $PROJECT_BASE_PATH/env
-sudo python3 -m venv $PROJECT_BASE_PATH/env
+python3 -m venv $PROJECT_BASE_PATH/env
 
-# Install python packages
-sudo $PROJECT_BASE_PATH/env/bin/pip install -r $PROJECT_BASE_PATH/requirements.txt
-sudo $PROJECT_BASE_PATH/env/bin/pip install uwsgi==2.0.18
+# Activate the virtual environment
+source $PROJECT_BASE_PATH/env/bin/activate
+
+# Install python packages locally within the virtual environment
+pip install -r $PROJECT_BASE_PATH/requirements.txt
+pip install uwsgi==2.0.18
 
 # Run migrations and collectstatic
 cd $PROJECT_BASE_PATH
-sudo $PROJECT_BASE_PATH/env/bin/python manage.py migrate
-sudo $PROJECT_BASE_PATH/env/bin/python manage.py collectstatic --noinput
+python manage.py migrate
+python manage.py collectstatic --noinput
 
-# Configure supervisor
+# Deactivate the virtual environment
+deactivate
+
+# Configure supervisor (may still require sudo depending on the system)
 sudo cp $PROJECT_BASE_PATH/deploy/supervisor_profiles_api.conf /etc/supervisor/conf.d/profiles_api.conf
 sudo supervisorctl reread
 sudo supervisorctl update
 sudo supervisorctl restart profiles_api
 
-# Configure nginx
+# Configure nginx (requires sudo)
 sudo cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
 sudo rm /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
