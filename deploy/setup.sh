@@ -1,15 +1,15 @@
-#! /usr/local/apps/profiles-rest-api
+#!/usr/bin/env bash
 
 set -e
 
 # TODO: Set to URL of git repo.
-PROJECT_GIT_URL='https://github.com/sanjithhithub/profile-rest-api.git'
+PROJECT_GIT_URL='https://github.com/CHANGEME.git'
 
 PROJECT_BASE_PATH='/usr/local/apps/profiles-rest-api'
 
 echo "Installing dependencies..."
 sudo yum update
-sudo yum install -y python3 python3-pip python3-devel python3-venv sqlite supervisor nginx git
+sudo yum install -y python3-devel python3-venv sqlite python3-pip supervisor nginx git
 
 # Create project directory
 sudo mkdir -p $PROJECT_BASE_PATH
@@ -29,15 +29,15 @@ sudo $PROJECT_BASE_PATH/env/bin/python manage.py migrate
 sudo $PROJECT_BASE_PATH/env/bin/python manage.py collectstatic --noinput
 
 # Configure supervisor
-sudo cp $PROJECT_BASE_PATH/deploy/supervisor_profiles_api.conf /etc/supervisor/conf.d/profiles_api.conf
+sudo cp $PROJECT_BASE_PATH/deploy/supervisor_profiles_api.conf /etc/supervisord.d/profiles_api.conf
 sudo supervisorctl reread
 sudo supervisorctl update
 sudo supervisorctl restart profiles_api
 
 # Configure nginx
-sudo cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
-sudo rm /etc/nginx/sites-enabled/default
-sudo ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
-sudo systemctl restart nginx
+sudo cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/conf.d/profiles_api.conf
+sudo rm /etc/nginx/conf.d/default.conf
+sudo ln -s /etc/nginx/conf.d/profiles_api.conf /etc/nginx/conf.d/profiles_api.conf
+sudo systemctl restart nginx.service
 
 echo "DONE! :)"
