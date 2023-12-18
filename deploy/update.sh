@@ -1,9 +1,9 @@
-#!#!/usr/bin/env bash
+#!'\Users\sanjith\Desktop\New'  '\env'  'folder\profile-rest-api'
 
 
 set -e
 
-PROJECT_BASE_PATH='/usr/local/apps/profile-rest-api'
+PROJECT_BASE_PATH=''\Users\sanjith\Desktop\New'  '\env'  'folder\profile-rest-api''
 
 
 git pull
