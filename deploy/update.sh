@@ -3,7 +3,7 @@
 
 set -e
 
-PROJECT_BASE_PATH=''\Users\sanjith\Desktop\New'  '\env'  'folder\profile-rest-api''
+PROJECT_BASE_PATH='\Users\sanjith\Desktop\New'  '\env'  'folder\profile-rest-api'
 
 
 git pull
