@@ -3,7 +3,7 @@
 
 set -e
 
-PROJECT_BASE_PATH='/path/to/your/preferred/location/profiles-rest-api'
+PROJECT_BASE_PATH='/usr/local/apps/profiles-rest-api'
 
 
 git pull
