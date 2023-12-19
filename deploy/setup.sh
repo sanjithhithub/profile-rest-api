@@ -41,9 +41,19 @@ supervisorctl restart profiles_api
 echo "DONE! :)"
 
 # Configure nginx
-cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
-rm /etc/nginx/sites-enabled/default || true
-ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
-systemctl restart nginx.service
+# Configure nginx
+cp "$PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf" "/etc/nginx/sites-available/profiles_api.conf"
+rm -f "/etc/nginx/sites-enabled/default" || true
+
+# Create a symbolic link
+ln -sf "/etc/nginx/sites-available/profiles_api.conf" "/etc/nginx/sites-enabled/profiles_api.conf"
+
+# Restart Nginx
+if systemctl restart nginx.service; then
+    echo "Nginx restarted successfully."
+else
+    echo "Error: Unable to restart Nginx."
+    exit 1
+fi
 
 echo "DONE! :)"
