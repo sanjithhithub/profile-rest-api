@@ -21,7 +21,7 @@ python3 -m venv $PROJECT_BASE_PATH/env
 
 # Install python packages
 $PROJECT_BASE_PATH/env/bin/pip install -r $PROJECT_BASE_PATH/requirements.txt
-$PROJECT_BASE_PATH/env/bin/pip install wsgi==3.0
+$PROJECT_BASE_PATH/env/bin/pip install wsgi==3.0.0
 
 # Run migrations and collectstatic
 cd $PROJECT_BASE_PATH
