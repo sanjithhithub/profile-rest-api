@@ -122,8 +122,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+STATIC_ROOT = ''
+
 STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = 'profiles_api.Userprofile'
+STATICFILES_DIRS = ('static',)
 
-STATIC_ROOT = '/static/'
+AUTH_USER_MODEL = 'profiles_api.Userprofile'
