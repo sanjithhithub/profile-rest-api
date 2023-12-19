@@ -42,8 +42,8 @@ supervisorctl restart profiles_api
 echo "DONE! :)"
 
 # Configure nginx
-cp "$PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf" /etc/nginx/sites-available/profiles_api.conf
-rm /etc/nginx/sites-enabled/default || true  # Ignore error if the file doesn't exist
+cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
+rm /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
 systemctl restart nginx.service
 
