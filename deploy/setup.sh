@@ -21,7 +21,7 @@ python3 -m venv $PROJECT_BASE_PATH/env
 
 # Install python packages
 $PROJECT_BASE_PATH/env/bin/pip install -r $PROJECT_BASE_PATH/requirements.txt
-$PROJECT_BASE_PATH/env/bin/pip install wsgi==2.7.5
+$PROJECT_BASE_PATH/env/bin/pip install gunicorn==20.1.0
 
 # Run migrations and collectstatic
 cd $PROJECT_BASE_PATH
