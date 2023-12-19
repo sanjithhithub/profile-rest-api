@@ -33,7 +33,8 @@ python manage.py collectstatic --noinput
 echo "DONE! :)"
 
 # Configure supervisor
-cp "$PROJECT_BASE_PATH/deploy/supervisor_profiles_api.conf" /etc/supervisor/conf.d/profiles_api.conf
+cp SUPERVISOR_CONF="$PROJECT_BASE_PATH/deploy/supervisor_profiles_api.conf"
+SUPERVISOR_TARGET="/etc/supervisor/conf.d/profiles_api.conf"
 supervisorctl reread
 supervisorctl update
 supervisorctl restart profiles_api
