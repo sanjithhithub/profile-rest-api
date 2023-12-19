@@ -41,31 +41,9 @@ supervisorctl restart profiles_api
 echo "DONE! :)"
 
 # Configure nginx
-#!/bin/bash
-
-PROJECT_BASE_PATH="/path/to/your/project"  # Change this to your actual project base path
-
-nginx_config_file="$PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf"
-nginx_syslink_path="/etc/nginx/sites-enabled/profiles_api.conf"
-default_nginx_config_file="/etc/nginx/sites-enabled/default"
-
-# Copy the nginx config file to sites-available
-cp "$nginx_config_file" /etc/nginx/sites-available/profiles_api.conf
-
-# Remove the default nginx config if it exists
-if [ -f "$default_nginx_config_file" ]; then
-    rm "$default_nginx_config_file"
-fi
-
-# Remove the default symlink in sites-enabled
-if [ -f "$nginx_syslink_path" ]; then
-    rm "$nginx_syslink_path"
-fi
-
-# Create a new symlink in sites-enabled
-ln -s /etc/nginx/sites-available/profiles_api.conf "$nginx_syslink_path"
-
-# Restart nginx
+cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
+rm /etc/nginx/sites-enabled/default || true
+ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
 systemctl restart nginx.service
 
 echo "DONE! :)"
