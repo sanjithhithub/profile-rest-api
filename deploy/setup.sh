@@ -42,7 +42,21 @@ echo "DONE! :)"
 
 # Configure nginx
 cp $PROJECT_BASE_PATH/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
+
+default_nginx_config_file = "/etc/nginx/sites-enabled/default"
+if [-f "$default_nginx_config_file"]; then
+    rm "$default_nginx_config_file"
+fi
+
+
+if
 rm /etc/nginx/sites-enabled/default || true
+
+nginx_app_syslink_path = "/etc/nginx/sites-enabled/profiles_api.conf"
+if [-f "$nginx_app_syslink_path"]; then
+    rm "$nginx_app_syslink_path"
+fi
+
 ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
 systemctl restart nginx.service
 
