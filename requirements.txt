@@ -1,4 +1,4 @@
 django==3.0
 djangorestframework==3.14.0
-wsgi
+wsgi==2.7.5
 
